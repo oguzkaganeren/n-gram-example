@@ -3,6 +3,8 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,10 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.stream.Collectors;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -35,7 +33,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JList;
@@ -45,7 +42,6 @@ import java.awt.event.ActionEvent;
 
 public class Main extends JFrame {
 
-	static BufferedWriter output = null;
 	static JPanel contentPane;
 	/**
 	 * Launch the application.
@@ -55,12 +51,6 @@ public class Main extends JFrame {
 			public void run() {
 				Main frame = new Main();
 				frame.setVisible(true);
-				try {
-		            File file = new File("theLog.txt");
-		            output = new BufferedWriter(new FileWriter(file));
-		        } catch ( IOException e ) {
-		            e.printStackTrace();
-		        } 
 				JButton btnUButton = new JButton("UNUTULMUŞ DİYARLAR");
 				btnUButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
@@ -101,9 +91,6 @@ public class Main extends JFrame {
 	}
 	
 	static public void printResults(String fileName,int x,int y) {
-
-
-
 		JFrame frame = new JFrame(fileName);
 		frame.setBounds(100, 100, 900, 800);
 		frame.setLocation(x, y);
@@ -129,33 +116,9 @@ public class Main extends JFrame {
 	    "<br> Total time:"+String.valueOf(resultOneTime+resultTwoTime+resultThreeTime)+" ns");
 		lblU.setLocation(0,25);
 		contentPane.add(lblU);
-		try {
-			output.write(fileName+"--------------------"+"\n");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		createList(countRepeated(resultOne));
-		try {
-			output.write(fileName+"--------------------bigram"+"\n");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		createList(countRepeated(resultTwo));
-		try {
-			output.write(fileName+"--------------------trigram"+"\n");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		createList(countRepeated(resultThree));
-		try {
-			output.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		//System.out.println(readFile("UNUTULMUŞ DİYARLAR.txt"));
 	}
 	static public void createList(Map<String, Integer> result) { 
@@ -163,12 +126,6 @@ public class Main extends JFrame {
 		result.entrySet().forEach(entry->{
 			   // System.out.println(entry.getKey().toString() + " " + entry.getValue().toString());  
 			    listModel.addElement(entry.getKey().toString() + " " + entry.getValue().toString());
-			    try {
-					output.write(entry.getKey().toString() + " " + entry.getValue().toString()+"\n");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			 });
 		
 		
@@ -189,7 +146,7 @@ public class Main extends JFrame {
 		try {
 			File fileDir = new File(fileName);
 			//Türkçe karakter sorunu çözüldü
-			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(fileDir), "WINDOWS-1254"));
+			BufferedReader in = new BufferedReader(new InputStreamReader(Main.class.getResourceAsStream(fileName), "WINDOWS-1254"));
 
 			String str;
 
@@ -314,7 +271,10 @@ public class Main extends JFrame {
 	 */
 	public Main() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 700, 800);
+		 Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+		 int x = (int) ((dimension.getWidth() - 700) / 2);
+		 int y = (int) ((dimension.getHeight() - 300) / 2);
+		setBounds(x, y, 700, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		//contentPane.setLayout(new FlowLayout());
